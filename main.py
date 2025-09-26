@@ -38,7 +38,7 @@ Please use english.
     return result
 
 
-async def find_rss_feed(message: str):
+async def find_rss_feed(message: str, original_url: str):
     async with MCPServerStdio(
         name="playwright mcp server",
         params={
@@ -86,9 +86,23 @@ async def find_rss_feed(message: str):
             model_settings=ModelSettings(tool_choice="auto"),
         )
         input_items = [{"role": "user", "content": message}]
-
-        result = await Runner.run(starting_agent=find_rss_feed_agent, input=input_items)
-        return result
+        try:
+            result = await Runner.run(
+                starting_agent=find_rss_feed_agent, input=input_items
+            )
+            if isinstance(result, dict):
+                if result.get("primary_feed") is None:
+                    result["primary_feed"] = ""
+                if result.get("notes") is None:
+                    result["notes"] = ""
+            return result
+        except Exception as e:
+            return {
+                "original_url": original_url,
+                "feeds": [],
+                "primary_feed": "",
+                "notes": f"执行查找过程中出现异常: {type(e).__name__}: {e}. 已返回空的结果（表示未找到或页面不支持 RSS/Atom）。"
+            }
 
 
 def main():
@@ -96,10 +110,8 @@ def main():
     print(f"Processing URL: {url}")
 
     # You can now use the URL in your message or processing
-    message = (
-        f"找到这个url对应的网站提供的rss订阅地址: {url}"
-    )
-    result = asyncio.run(find_rss_feed(message))
+    message = f"找到这个url对应的网站提供的rss订阅地址: {url}"
+    result = asyncio.run(find_rss_feed(message=message, original_url=url))
     print(result)
 
 
