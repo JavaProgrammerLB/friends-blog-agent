@@ -24,20 +24,6 @@ openai_client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 model = OpenAIChatCompletionsModel(model=model_name, openai_client=openai_client)
 
 
-async def chat(message: str):
-    friends_blog_agent = Agent(
-        name="Friends Blog Agent",
-        instructions="""
-Please use english.
-        """,
-        model=model,
-    )
-    input_items = [{"role": "user", "content": message}]
-
-    result = await Runner.run(starting_agent=friends_blog_agent, input=input_items)
-    return result
-
-
 async def find_rss_feed(message: str, original_url: str):
     async with MCPServerStdio(
         name="playwright mcp server",
@@ -101,7 +87,7 @@ async def find_rss_feed(message: str, original_url: str):
                 "original_url": original_url,
                 "feeds": [],
                 "primary_feed": "",
-                "notes": f"执行查找过程中出现异常: {type(e).__name__}: {e}. 已返回空的结果（表示未找到或页面不支持 RSS/Atom）。"
+                "notes": f"执行查找过程中出现异常: {type(e).__name__}: {e}. 已返回空的结果（表示未找到或页面不支持 RSS/Atom）。",
             }
 
 
