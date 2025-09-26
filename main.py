@@ -54,9 +54,9 @@ async def find_rss_feed(message: str, original_url: str):
 {
     "original_url": "...",
     "feeds": [
-        {"url": "...", "valid": true/false, "type": "rss|atom|unknown", "discovered_by": "link_tag|anchor_text|guess_pattern", "item_count": 数字或 null}
+        {"url": "...", "valid": true/false, "type": "rss|atom|unknown", "discovered_by": "link_tag|anchor_text|guess_pattern", "item_count": 数字或 0}
     ],
-    "primary_feed": "...或null",
+    "primary_feed": "...或''",
     "notes": "如果失败，说明尝试了哪些步骤"
 }
 
